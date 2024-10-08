@@ -1,0 +1,13 @@
+.ds_store
+desktop.ini
+__pycache__
+.*
+!.gitignore
+!.nvmrc
+!.gitattributes
+
+/.*/
+!/.github/
+
+test_project/*
+*.tif
