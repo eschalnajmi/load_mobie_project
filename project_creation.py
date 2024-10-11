@@ -182,8 +182,6 @@ class Project:
 
         self.source_list.append(names)
 
-        return
-
     def deletetmp(self):
         for dir in os.listdir(os.getcwd()):
             if(dir[0:3] == "tmp"):
@@ -192,11 +190,6 @@ class Project:
         for file in os.listdir("data"):
             if(file[0:3] == "tmp"):
                 os.remove(os.path.join("data",file))
-
-        return
-
-
-
 
 
 project = Project(unit="nanometer")
