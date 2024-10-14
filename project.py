@@ -8,15 +8,16 @@ from bioio.writers import OmeTiffWriter
 from bioio import BioImage
 
 class Project:
-    def __init__(self, unit="nanometer"):
-        self.project_folder = "test_project/data"
-        self.dataset_name = "dataset1"
+    def __init__(self, destination_folder, project_name, dataset_name, target="local", unit="nanometer"):
+        self.project_folder = os.path.join(destination_folder,project_name,"data")
+        self.dataset_name = dataset_name
         self.dataset_folder = os.path.join(self.project_folder, self.dataset_name)
-        self.target = "local"
-        self.max_jobs = 1
+        self.target = target
+        self.max_jobs = 4
         self.unit = unit
 
         self.source_list = []
+        self.settings=[]
 
     def splitchannels(self,img,path):
         num_channels = len(img.channel_names)
@@ -190,28 +191,3 @@ class Project:
         for file in os.listdir("data"):
             if(file[0:3] == "tmp"):
                 os.remove(os.path.join("data",file))
-
-
-project = Project(unit="nanometer")
-project.add_file("data/em_20nm_z_40_145.tif", "em")
-transformation = [1.8369913620359506,
-                -0.5565781005969193,
-                -24.28254860249842,
-                68.37265958995685,
-                -0.08026654420496038,
-                1.8421093883743114,
-                2.937347223020879,
-                -137.17914808990668,
-                -6.591949208711867E-17,
-                2.5724757460004824E-33,
-                0.999999999999993,
-                7.638334409421077E-14]
-project.add_file("data/EM04468_2_63x_pos8T_LM_raw.tif", "lm", transform=transformation, color="green")
-
-settings = [{"color": "white", "contrastLimits": [0., 255.]}, {"opacity": 0.75}]
-
-mobie.create_view(project.dataset_folder, "default",
-                sources=project.source_list, display_settings=settings,
-                overwrite=True)
-    
-project.deletetmp()
