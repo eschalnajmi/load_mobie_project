@@ -194,7 +194,7 @@ class Project:
 
 project = Project(unit="nanometer")
 project.add_file("data/em_20nm_z_40_145.tif", "em")
-'''transformation = [1.8369913620359506,
+transformation = [1.8369913620359506,
                 -0.5565781005969193,
                 -24.28254860249842,
                 68.37265958995685,
@@ -212,6 +212,6 @@ settings = [{"color": "white", "contrastLimits": [0., 255.]}, {"opacity": 0.75}]
 
 mobie.create_view(project.dataset_folder, "default",
                 sources=project.source_list, display_settings=settings,
-                overwrite=True)'''
+                overwrite=True)
     
 project.deletetmp()

@@ -1,0 +1,12 @@
+name: test_mobie_project
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - mobie_utils
+  - pip
+  - pip:
+    - bioio
+    - bioio-ome-zarr
+    - bioio-ome-tiff
+    - bioio_tifffile
