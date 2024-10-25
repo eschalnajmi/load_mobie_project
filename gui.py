@@ -1,5 +1,6 @@
 import sys
 import os
+import mobie 
 
 from project import Project
 
@@ -26,7 +27,7 @@ class Window(QWidget):
 
         self.setLayout(self.layout)
 
-        self.viewwindow()
+        self.projectwindow()
 
     def clearlayout(self):
         while self.layout.count():
@@ -51,7 +52,7 @@ class Window(QWidget):
             unit = get_unit.text()
             target = str(get_target.currentText())
 
-            # TODO: create project here
+            self.project = Project(self.folder, project_name, dataset_name, target,unit)
             folderdisplay.deleteLater()
             self.clearlayout()
             self.filewindow()
@@ -86,7 +87,7 @@ class Window(QWidget):
     def filewindow(self):
 
         def get_file():
-            self.file = QFileDialog(self, "Select image file")
+            self.file = QFileDialog.getOpenFileName(self, "Select image file")[0]
         
         def add_image():
             menu = get_menu_name.text()
@@ -96,13 +97,22 @@ class Window(QWidget):
             transformation = [get_transformation.text()]
             colour = str(get_colour.currentText())
 
-            #TODO: add image to project
+            if colour == " ":
+                colour = None
+            
+            if transformation[0] == "":
+                transformation = None
+
+            self.project.add_file(self.file, menu, transformation, colour)
+
             self.clearlayout()
             self.filewindow()
 
         def nextwindow():
+            filedisplay.deleteLater()
+            selectfilebtn.deleteLater()
             self.clearlayout()
-            exit(0)
+            self.viewwindow()
         
         self.file = ""
         gflayout = QHBoxLayout()
@@ -127,7 +137,7 @@ class Window(QWidget):
         nextwindowbtn.setText("Finished adding images")
         nextwindowbtn.clicked.connect(nextwindow)
 
-        self.layout.addRow("Image file: ", gflayout)
+        self.layout.addRow("Image file: ", selectfilebtn)
         self.layout.addRow("Menu name: ", get_menu_name)
         self.layout.addRow("Transformation: ", get_transformation)
         self.layout.addRow("Colour: ", get_colour)
@@ -173,10 +183,10 @@ class Window(QWidget):
 
             get_view_name.clear()
 
-            #TODO: create view
+            mobie.create_view(self.project.destination_folder, view_name, sources=sources, display_settings=settings,overwrite=True)
 
         def end():
-            #TODO: remove tmp files
+            self.project.deletetmp()
             exit(0)
 
         get_view_name = QLineEdit()
