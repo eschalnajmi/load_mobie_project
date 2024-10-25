@@ -59,7 +59,7 @@ class Project:
         return [path], [os.path.basename(path)]
         
     def addimg(self, input_path, im_name, menu_name, color=None):
-        resolution = (10., 10., 10.)
+        resolution = (0, 0, 0)
 
         project_folder = self.project_folder
         dataset_name = self.dataset_name
@@ -104,7 +104,7 @@ class Project:
         
 
     def addimgtransform(self,input_path, im_name, menu_name, transform, color=None):
-        resolution = (10, 10, 10)
+        resolution = (0, 0, 0)
         if len(transform) != 12:
             print("Invalid transformation matrix, must be 12 elements long - your matrix has", len(transform))
             return

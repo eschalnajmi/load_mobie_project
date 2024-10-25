@@ -4,11 +4,11 @@ channels:
 dependencies:
   - python=3.11
   - mobie_utils
+  - magicgui
+  - pyqt
   - pip
   - pip:
     - bioio
     - bioio-ome-zarr
     - bioio-ome-tiff
     - bioio_tifffile
-    - magicgui
-    - pyqt5-tools
