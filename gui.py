@@ -166,7 +166,11 @@ class Window(QWidget):
             strlowercl = str(get_lowercl.text())
             stropacity = str(get_opacity.text())
 
-            sources.append(menu)
+            imagesources = []
+            for image in self.images:
+                if menu == image[1]:
+                    imagesources.append(image[0])
+            sources.append(imagesources)
 
             setting = {}
             if colour != " ":
@@ -199,7 +203,6 @@ class Window(QWidget):
             self.views.append(view)
 
         def end():
-            #self.close()
             qApp.quit()
 
         get_view_name = QLineEdit()
@@ -257,32 +260,15 @@ window = Window()
 window.show()
 app.exec_()
 
-
-# add dummy image data because luigi hates me
-
-tmptif = Image.open("temp/blank.jpg")
-tmptif.save("temp/blank.tif")
-
-image = ["temp/blank.tif", "blank", None, None]
-
-images = []
-images.append(image)
-
 projectvals, images, views = window.getvals()
-
-
-print(f"Project folder: {projectvals[0]}. Project name: {projectvals[1]}. Dataset name: {projectvals[2]}. Target: {projectvals[3]}. Unit: {projectvals[4]}.")
-
-for image in images:
-    print(f"Image: {image[0]}. Menu: {image[1]}. Transformation: {image[2]}. Colour: {image[3]}.")
-
-for view in views:
-    print(f"Folder: {view[0]}. Name: {view[1]}. Sources: {view[2]}. Settings: {view[3]}.")
 
 project = Project(projectvals[0], projectvals[1], projectvals[2], projectvals[3], projectvals[4])
 
 for image in images:
     project.add_file(image[0], image[1], image[2], image[3])
+
+for view in views:
+    print(f"Folder: {view[0]}. Name: {view[1]}. Sources: {view[2]}. Settings: {view[3]}.")
 
 for view in views:
     mobie.create_view(view[0], view[1], sources=view[2], display_settings=view[3], overwrite=True)
