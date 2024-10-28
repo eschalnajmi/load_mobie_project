@@ -17,6 +17,7 @@ class Project:
         self.unit = unit
 
         self.source_list = []
+        self.menu_names = []
         self.settings=[]
 
     def splitchannels(self,img,path):
@@ -180,8 +181,12 @@ class Project:
         else:
             for i, x in enumerate(all):
                 self.addimg(x,f"{i}_{raw_name}",menu_name, color=color)
-
-        self.source_list.append(names)
+        
+        if menu_name not in self.menu_names:
+            self.menu_names.append(menu_name)
+            self.source_list.append(names)
+        else:
+            self.source_list[self.menu_names.index(menu_name)] += names
 
     def deletetmp(self):
         for dir in os.listdir(os.getcwd()):

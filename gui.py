@@ -63,6 +63,7 @@ class Window(QWidget):
             target = str(get_target.currentText())
 
             self.project = [self.folder, project_name, dataset_name, target, unit]
+            self.dataset_folder = os.path.join(project_name, "data", dataset_name)
             folderdisplay.deleteLater()
             self.clearlayout()
             self.filewindow()
@@ -166,11 +167,7 @@ class Window(QWidget):
             strlowercl = str(get_lowercl.text())
             stropacity = str(get_opacity.text())
 
-            imagesources = []
-            for image in self.images:
-                if menu == image[1]:
-                    imagesources.append(image[0])
-            sources.append(imagesources)
+            sources.append(menu)
 
             setting = {}
             if colour != " ":
@@ -198,7 +195,7 @@ class Window(QWidget):
 
             get_view_name.clear()
 
-            view = [self.folder, view_name, sources, settings]
+            view = [self.dataset_folder, view_name, sources, settings]
 
             self.views.append(view)
 
@@ -260,17 +257,27 @@ window = Window()
 window.show()
 app.exec_()
 
+allsources = []
+
 projectvals, images, views = window.getvals()
 
 project = Project(projectvals[0], projectvals[1], projectvals[2], projectvals[3], projectvals[4])
 
 for image in images:
-    project.add_file(image[0], image[1], image[2], image[3])
+    source = []
+    names = project.add_file(image[0], image[1], image[2], image[3])
+    source.append(image[1])
+    source.append(names)
+    allsources.append(source)
+
 
 for view in views:
-    print(f"Folder: {view[0]}. Name: {view[1]}. Sources: {view[2]}. Settings: {view[3]}.")
+    source_list = []
 
-for view in views:
-    mobie.create_view(view[0], view[1], sources=view[2], display_settings=view[3], overwrite=True)
+    for menu in view[2]:
+        if menu in project.menu_names:
+            source_list.append(project.source_list[project.menu_names.index(menu)])
+    
+    mobie.create_view(view[0], view[1], sources=source_list, display_settings=view[3], overwrite=True)
 
 project.deletetmp()
