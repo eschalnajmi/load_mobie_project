@@ -1,8 +1,7 @@
 import sys
 import os
-import mobie 
 
-from project import Project
+from project import *
 
 from PyQt5.QtWidgets import (
     QApplication,
@@ -14,6 +13,7 @@ from PyQt5.QtWidgets import (
     QFileDialog,
     QPushButton,
     QLabel,
+    qApp,
 )
 
 class Window(QWidget):
@@ -23,6 +23,13 @@ class Window(QWidget):
         self.layout = QFormLayout()
 
         self.menus = []
+
+        self.project = []
+
+        self.images = []
+
+        self.views = []
+
         self.setWindowTitle("MOBIE Project Creator")
 
         self.setLayout(self.layout)
@@ -52,7 +59,7 @@ class Window(QWidget):
             unit = get_unit.text()
             target = str(get_target.currentText())
 
-            self.project = Project(self.folder, project_name, dataset_name, target,unit)
+            self.project = [self.folder, project_name, dataset_name, target, unit]
             folderdisplay.deleteLater()
             self.clearlayout()
             self.filewindow()
@@ -103,7 +110,8 @@ class Window(QWidget):
             if transformation[0] == "":
                 transformation = None
 
-            self.project.add_file(self.file, menu, transformation, colour)
+            img = [self.file, menu, transformation, colour]
+            self.images.append(img)
 
             self.clearlayout()
             self.filewindow()
@@ -183,18 +191,20 @@ class Window(QWidget):
 
             get_view_name.clear()
 
-            mobie.create_view(self.project.destination_folder, view_name, sources=sources, display_settings=settings,overwrite=True)
+            view = [self.folder, view_name, sources, settings]
+
+            self.views.append(view)
 
         def end():
-            self.project.deletetmp()
-            exit(0)
+            #self.close()
+            qApp.quit()
 
         get_view_name = QLineEdit()
 
         get_menus = QComboBox()
         get_menus.addItems([i for i in self.menus if i not in sources])
         get_colour = QComboBox()
-        get_colour.addItems([" ", "green", "red", "blue"])
+        get_colour.addItems([" ", "green", "red", "blue", "white"])
         get_opacity = QLineEdit()
 
         get_lowercl = QLineEdit()
@@ -236,7 +246,30 @@ class Window(QWidget):
         self.layout.addRow(createviewbtn)
         self.layout.addRow(completebtn)
 
+    def getvals(self):
+        return self.project, self.images, self.views
+
 app = QApplication(sys.argv)
 window = Window()
 window.show()
-sys.exit(app.exec_())
+app.exec_()
+
+projectvals,images,views = [],[],[]
+projectvals, images, views = window.getvals()
+
+print(f"Project folder: {projectvals[0]}. Project name: {projectvals[1]}. Dataset name: {projectvals[2]}. Target: {projectvals[3]}. Unit: {projectvals[4]}.")
+for image in images:
+    print(f"Image: {image[0]}. Menu: {image[1]}. Transformation: {image[2]}. Colour: {image[3]}.")
+
+for view in views:
+    print(f"Folder: {view[0]}. Name: {view[1]}. Sources: {view[2]}. Settings: {view[3]}.")
+
+'''project = Project(projectvals[0], projectvals[1], projectvals[2], projectvals[3], projectvals[4])
+
+for image in images:
+    project.add_file(image[0], image[1], image[2], image[3])
+
+for view in views:
+    mobie.create_view(view[0], view[1], sources=view[2], display_settings=view[3], overwrite=True)
+
+project.deletetmp()'''
