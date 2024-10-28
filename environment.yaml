@@ -12,3 +12,4 @@ dependencies:
     - bioio-ome-zarr
     - bioio-ome-tiff
     - bioio_tifffile
+    - pillow
