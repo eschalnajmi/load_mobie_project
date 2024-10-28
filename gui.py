@@ -1,7 +1,10 @@
 import sys
 import os
 
-from project import Project
+import requests
+
+from project import *
+from PIL import Image
 
 from PyQt5.QtWidgets import (
     QApplication,
@@ -13,6 +16,7 @@ from PyQt5.QtWidgets import (
     QFileDialog,
     QPushButton,
     QLabel,
+    qApp,
 )
 
 class Window(QWidget):
@@ -22,11 +26,18 @@ class Window(QWidget):
         self.layout = QFormLayout()
 
         self.menus = []
+
+        self.project = []
+
+        self.images = []
+
+        self.views = []
+
         self.setWindowTitle("MOBIE Project Creator")
 
         self.setLayout(self.layout)
 
-        self.viewwindow()
+        self.projectwindow()
 
     def clearlayout(self):
         while self.layout.count():
@@ -51,7 +62,8 @@ class Window(QWidget):
             unit = get_unit.text()
             target = str(get_target.currentText())
 
-            # TODO: create project here
+            self.project = [self.folder, project_name, dataset_name, target, unit]
+            self.dataset_folder = os.path.join(project_name, "data", dataset_name)
             folderdisplay.deleteLater()
             self.clearlayout()
             self.filewindow()
@@ -86,7 +98,7 @@ class Window(QWidget):
     def filewindow(self):
 
         def get_file():
-            self.file = QFileDialog(self, "Select image file")
+            self.file = QFileDialog.getOpenFileName(self, "Select image file")[0]
         
         def add_image():
             menu = get_menu_name.text()
@@ -96,13 +108,23 @@ class Window(QWidget):
             transformation = [get_transformation.text()]
             colour = str(get_colour.currentText())
 
-            #TODO: add image to project
+            if colour == " ":
+                colour = None
+            
+            if transformation[0] == "":
+                transformation = None
+
+            img = [self.file, menu, transformation, colour]
+            self.images.append(img)
+
             self.clearlayout()
             self.filewindow()
 
         def nextwindow():
+            filedisplay.deleteLater()
+            selectfilebtn.deleteLater()
             self.clearlayout()
-            exit(0)
+            self.viewwindow()
         
         self.file = ""
         gflayout = QHBoxLayout()
@@ -127,7 +149,7 @@ class Window(QWidget):
         nextwindowbtn.setText("Finished adding images")
         nextwindowbtn.clicked.connect(nextwindow)
 
-        self.layout.addRow("Image file: ", gflayout)
+        self.layout.addRow("Image file: ", selectfilebtn)
         self.layout.addRow("Menu name: ", get_menu_name)
         self.layout.addRow("Transformation: ", get_transformation)
         self.layout.addRow("Colour: ", get_colour)
@@ -173,18 +195,19 @@ class Window(QWidget):
 
             get_view_name.clear()
 
-            #TODO: create view
+            view = [self.dataset_folder, view_name, sources, settings]
+
+            self.views.append(view)
 
         def end():
-            #TODO: remove tmp files
-            exit(0)
+            qApp.quit()
 
         get_view_name = QLineEdit()
 
         get_menus = QComboBox()
         get_menus.addItems([i for i in self.menus if i not in sources])
         get_colour = QComboBox()
-        get_colour.addItems([" ", "green", "red", "blue"])
+        get_colour.addItems([" ", "green", "red", "blue", "white"])
         get_opacity = QLineEdit()
 
         get_lowercl = QLineEdit()
@@ -226,7 +249,35 @@ class Window(QWidget):
         self.layout.addRow(createviewbtn)
         self.layout.addRow(completebtn)
 
+    def getvals(self):
+        return self.project, self.images, self.views
+
 app = QApplication(sys.argv)
 window = Window()
 window.show()
-sys.exit(app.exec_())
+app.exec_()
+
+allsources = []
+
+projectvals, images, views = window.getvals()
+
+project = Project(projectvals[0], projectvals[1], projectvals[2], projectvals[3], projectvals[4])
+
+for image in images:
+    source = []
+    names = project.add_file(image[0], image[1], image[2], image[3])
+    source.append(image[1])
+    source.append(names)
+    allsources.append(source)
+
+
+for view in views:
+    source_list = []
+
+    for menu in view[2]:
+        if menu in project.menu_names:
+            source_list.append(project.source_list[project.menu_names.index(menu)])
+    
+    mobie.create_view(view[0], view[1], sources=source_list, display_settings=view[3], overwrite=True)
+
+project.deletetmp()
