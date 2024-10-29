@@ -4,7 +4,6 @@ channels:
 dependencies:
   - python=3.11
   - mobie_utils
-  - magicgui
   - pyqt
   - pip
   - pip:

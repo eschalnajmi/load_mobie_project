@@ -12,3 +12,4 @@ __pycache__
 test_project/*
 *.tif
 data/*
+test/*
