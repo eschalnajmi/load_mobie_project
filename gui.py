@@ -1,7 +1,4 @@
-import sys
 import os
-
-import requests
 
 from project import *
 from PIL import Image
