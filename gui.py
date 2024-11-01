@@ -249,3 +249,67 @@ class Window(QWidget):
 
     def getvals(self):
         return self.project, self.images, self.views
+
+class imagedoneWindow(QWidget):
+    def __init__(self, failed):
+        super().__init__()
+
+        def exit(self):
+            qApp.quit()
+
+        layout = QFormLayout()
+
+        if len(failed) > 0:
+            failedtext = QLabel()
+            failedtext.setText("Could not add the following images: ")
+            layout.addRow(failedtext)
+
+            for file in failed:
+                filename = QLabel()
+                filename.setText(f"\t {file}")
+                layout.addRow(filename)
+
+        else:
+            successtext = QLabel()
+            successtext.setText("Successfully added all images!")
+            layout.addRow(successtext)
+
+        quitbutton = QPushButton()
+        quitbutton.setText("Ok")
+        quitbutton.clicked.connect(exit)
+        layout.addRow(quitbutton)
+
+        self.setLayout(layout)
+            
+class viewdoneWindow(QWidget):
+    def __init__(self, failed):
+        super().__init__()
+
+        def exit(self):
+            qApp.quit()
+
+        layout = QFormLayout()
+
+        if len(failed) > 0:
+            failedtext = QLabel()
+            failedtext.setText("Could not create the following view: ")
+            layout.addRow(failedtext)
+
+            for view in failed:
+                filename = QLabel()
+                filename.setText(f"\t {view}")
+                layout.addRow(filename)
+
+        else:
+            successtext = QLabel()
+            successtext.setText("Successfully created all views!")
+            layout.addRow(successtext)
+
+        quitbutton = QPushButton()
+        quitbutton.setText("Ok")
+        quitbutton.clicked.connect(exit)
+
+        layout.addRow(quitbutton)
+
+        self.setLayout(layout)
+            
