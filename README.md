@@ -8,7 +8,7 @@ Please note that at this moment this interface only works on linux due to depend
 
 1. Open your terminal and type in:
 ```
-git clone https://github.com/eschalnajmie/load_mobie_project.git
+git clone https://github.com/eschalnajmi/load_mobie_project.git
 ```
 ```
 cd load_mobie_project
